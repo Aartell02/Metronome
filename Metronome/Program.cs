@@ -1,11 +1,14 @@
-﻿using Spectre.Console;
+﻿using Metronome.Classes;
+using System.Reflection.Metadata;
+
 namespace Metronome
 {
-    internal class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            
+            Settings setting = new Settings();
+
         }
     }
 }

@@ -1,8 +1,7 @@
-﻿
+﻿using Spectre.Console;
+using Metronome.Controllers;
 
-using Spectre.Console;
-
-namespace Metronome
+namespace Metronome.Views
 {
     internal class SCInterface
     {
