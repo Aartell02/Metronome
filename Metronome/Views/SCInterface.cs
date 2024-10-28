@@ -1,17 +1,31 @@
 ﻿using Spectre.Console;
 using Metronome.Controllers;
+using Metronome.Models;
 
 namespace Metronome.Views
 {
-    internal class SCInterface
+    public class SCInterface
     {
-        static void Interface()
+        private Model? _model;
+
+        public SCInterface(Model model)
         {
-            var table = new Table();
-            table.AddColumn(new TableColumn("Screen").Centered());
-            table.AddRow("left");
-            table.Expand();
-            AnsiConsole.Write(table);
+            _model = model;
+        }
+
+        public void Display()
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.WriteLine($"Tempo: {_model.BPM}");
+            if (_model.IsRunning)
+            {
+                AnsiConsole.WriteLine("[green]Metronom działa[/]");
+            }
+            else
+            {
+                AnsiConsole.WriteLine("[red]Metronom zatrzymany[/]");
+            }
         }
     }
+
 }
