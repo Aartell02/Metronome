@@ -18,46 +18,19 @@ namespace Metronome.Controllers
         }
         public void Start()
         {
-            while (true)
-            {
-                _view.Display();
-                ConsoleKeyInfo key = Console.ReadKey();
+            int bpm = _view.GetUserInputBPM();
+            _model.BPM = bpm;
 
-                switch (key.Key)
-                {
-                    case ConsoleKey.UpArrow:
-                        _model.BPM++;
-                        break;
-                    case ConsoleKey.DownArrow:
-                        _model.BPM--;
-                        break;
-                    case ConsoleKey.Spacebar:
-                        _model.IsRunning = !_model.IsRunning;
-                        if (_model.IsRunning)
-                        {
-                            Task.Run(() => RunMetronom());
-                        }
-                        break;
-                    case ConsoleKey.Escape:
-                        return;
-                }
-            }
+            Console.Clear();
+            _view.ShowBPM(bpm);
+            _model.Start();
+            _view.ShowStartPrompt();
+            _view.Display(bpm); 
         }
-        private void RunMetronom()
+        public void Stop()
         {
-            while (_model.IsRunning)
-            {
-
-                int czasUderzenia = 60000 / _model.BPM;
-
-                AnsiConsole.WriteLine("[bold blue]Tick[/]");
-
-                Thread.Sleep(czasUderzenia);
-
-                AnsiConsole.WriteLine("[bold gray]Tock[/]");
-
-                Thread.Sleep(czasUderzenia);
-            }
+            _model.Stop();
+            _view.ShowStopPrompt();
         }
 
     }

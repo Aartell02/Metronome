@@ -6,12 +6,22 @@ using System.Threading.Tasks;
 
 namespace Metronome.Models
 {
+
     public class Model
     {
-        private int bPM;
-        public int BPM {  get; set; }
-        private bool isRunning;
-        public bool IsRunning { get { return isRunning; } set { isRunning = value; } }
+        public int BPM = 120;
+
+        public bool IsRunning = false;
+        public void Start()
+        {
+            IsRunning = true;
+        }
+
+        public void Stop()
+        {
+            IsRunning = false;
+        }
     }
+
 
 }
