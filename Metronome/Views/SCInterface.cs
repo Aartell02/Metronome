@@ -1,79 +1,91 @@
 ﻿using Spectre.Console;
 using Metronome.Controllers;
-using Metronome.Models;
 using System;
+using System.Reflection.PortableExecutable;
+using System.Media;
+using System.Diagnostics;
+using System.Timers;
+using System.Data;
+using System.Threading.Channels;
 
 namespace Metronome.Views
 {
     public class SCInterface
     {
-        
-        public void Display(int BPM)
+        private ViewController _controller;
+        public void SetController(ViewController controller)
         {
-
-            int metrum1 = 4;
-            int metrum2 = 4;
-            var table = new Table().Centered();
-            var layout = new Layout("Root").SplitRows(
-                new Layout("Top"));
-
-                while (true)
+            _controller = controller;
+        }
+        public void Display()
+        {
+            while (true)
             {
+                AnsiConsole.Clear();
 
-                var startStop = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                var menu = AnsiConsole.Prompt(new SelectionPrompt<string>()
                     .Title("Wybierz opcję:")
-                    .AddChoices("Start", "Stop"));
-
-                if (startStop == "Start")
+                    .AddChoices("BPM", "Start", "Stop", "Close"));
+                if (menu == "BPM") _controller.SetBPM(OptionBPM(_controller.GetBPM()).Result);
+                else if (menu == "Start")
                 {
-                    AnsiConsole.MarkupLine("[yellow]![/]");
-
-                    AnsiConsole.Live(layout).Start(ctx =>
-                    {
-                        while (true)
-                        {
-                            var canvas = new Canvas(metrum1 * 2 - 1, 1);
-                            layout["Top"].Update(new Panel(
-                            Align.Center(
-                                canvas)).Expand());
-                            for (int i = 0; i < metrum1 * 2 - 1; i += 2)
-                            {
-
-                                canvas.SetPixel(i, 0, Color.White);
-                                ctx.Refresh();
-                                if (i == 0) Console.Beep(1500, 200);
-                                else Console.Beep(1000, 200);
-                                Thread.Sleep(60000 / BPM);
-                            }
-                        }
-                    });
-
+                    _controller.Timer_Start();
                 }
-                else if (startStop == "Stop")
+                else if (menu == "Stop")
                 {
-                    AnsiConsole.MarkupLine("[yellow]![/]");
+                    _controller.Timer_Stop();
+                    OptionClose();
                 }
-
+                else if (menu == "Close") return;
             }
         }
-        public void ShowStartPrompt()
+        public static async Task<int> OptionBPM(int bpm)
         {
-            AnsiConsole.MarkupLine("[green]Metronom został uruchomiony.[/]");
+            int _bpm = bpm;
+            AnsiConsole.Write("| Press Enter to save | Press Escape to leave | Press Up/Down Arrow to increase/decrease |\n");
+            var panel = new Panel($"[bold]Current BPM:[/] {_bpm}");
+            panel.Expand();
+
+            int finalBpm = await AnsiConsole.Live(panel).StartAsync(async ctx =>
+            {
+                ctx.UpdateTarget(panel);
+                while (true)
+                {
+                    var keyInfo = Console.ReadKey(intercept: true);
+                    switch (keyInfo.Key)
+                    {
+                        case ConsoleKey.UpArrow:
+                            if (_bpm < 240) _bpm++;
+                            break;
+
+                        case ConsoleKey.DownArrow:
+                            if (_bpm > 20) _bpm--;
+                            break;
+
+                        case ConsoleKey.Enter:
+                            return _bpm;
+                        case ConsoleKey.Escape:
+                            return bpm;
+                        default:
+                            break;
+                    }
+                    panel = new Panel($"[bold]Current BPM:[/] {_bpm}");
+                    panel.Expand();
+                    ctx.UpdateTarget(panel);
+                }
+            });
+            return finalBpm;
         }
-        public void ShowStopPrompt()
+        public static void OptionClose() { }
+
+
+        public static void ShowClosePrompt()
         {
-            AnsiConsole.MarkupLine("[red]Metronom został zatrzymany.[/]");
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine("[red]Bye! [/] :waving_hand:");
         }
 
-        public void ShowBPM(int bpm)
-        {
-            AnsiConsole.MarkupLine($"BPM: [yellow]{bpm}[/]");
-        }
 
-        public int GetUserInputBPM()
-        {
-            return AnsiConsole.Ask<int>("Podaj BPM (liczba całkowita): ");
-        }
+        
     }
-
 }
