@@ -12,17 +12,16 @@ namespace Metronome
     {
         public static void Main(string[] args)
         {
-            Model model = new Model();
+            ModelMetronome model = new ModelMetronome();
             SCInterface view = new SCInterface();
             ViewController controller = new ViewController(model, view);
             view.SetController(controller);
             Console.CancelKeyPress += (sender, e) =>
             {
-                controller.Close();
+                ViewController.Close();
                 Environment.Exit(0);
             };
             controller.Run();
-
         }
 
     }

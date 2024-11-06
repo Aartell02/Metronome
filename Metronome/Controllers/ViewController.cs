@@ -6,38 +6,22 @@ namespace Metronome.Controllers
 {
     public class ViewController
     {
-        private Model _model;
+        private ModelMetronome _model;
         private SCInterface _view;
 
-        public ViewController(Model model, SCInterface view) {
+        public ViewController(ModelMetronome model, SCInterface view) {
             this._model = model;
             this._view = view;
-            _model.timer.Elapsed += Timer_Elapsed;
         }
-        public void Run() {
-            _view.Display();
-
-        }
-        public void Timer_Start()
-        {
-            _model.timer.Start();
-            Console.Clear();;
-            
-        }
-        public void Timer_Stop()
-        {
-            _model.timer.Stop();
-        }
-        public void Timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            System.Console.Beep(500,300);
-        }
-        public void Close() {
-            SCInterface.ShowClosePrompt();
-        }
+        public void Run() => _view.Display();
+        public void Timer_Start() => _model.TimerStart();
+        public void Timer_Stop() => _model.TimerStop();
         public int GetBPM() => _model.BPM;
-
-        public void SetBPM(int BPM) => _model.UpdateBPM(BPM); 
-
+        public int GetBeats() => _model.beats;
+        public (int,int) GetSound() => _model.sound;
+        public void SetBPM(int BPM) => _model.UpdateBPM(BPM);
+        public void SetBeats(int beats) => _model.UpdateBeats(beats);
+        public void SetSound((int, int) sound) => _model.UpdateSound(sound);
+        public static void Close() => SCInterface.ShowClosePrompt();
     }
 }
