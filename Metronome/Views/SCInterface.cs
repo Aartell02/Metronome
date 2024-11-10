@@ -8,6 +8,8 @@ using System.Timers;
 using System.Data;
 using System.Threading.Channels;
 using static System.Net.Mime.MediaTypeNames;
+using Metronome.Models;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Metronome.Views
 {
@@ -91,10 +93,11 @@ namespace Metronome.Views
             {
                 AnsiConsole.Clear();
                 var menu = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                    .AddChoices("Beat Sound", "Return"));
+                    .AddChoices("Beat Sound", "Save Preset", "Load Preset", "Delete Preset", "Return"));
                 if (menu == "Beat Sound") _controller.SetSound(Sound(_controller.GetSound()).Result);
                 else if (menu == "Save Preset") OptionSavePreset();
                 else if (menu == "Load Preset") OptionLoadPreset();
+                else if (menu == "Delete Preset") OptionDeletePreset();
                 else if (menu == "Return") return;
             }
         }
@@ -142,11 +145,46 @@ namespace Metronome.Views
 
         public void OptionSavePreset()
         {
-            _controller.SavePreset(AnsiConsole.Prompt(new TextPrompt<string>("Please enter preset [green]name[/] to save:").PromptStyle("cyan")));
+            var name = AnsiConsole.Prompt(new TextPrompt<string>("Please enter preset [green]name[/] to save:").PromptStyle("cyan"));
+            if (!_controller.AddPreset(name)) AnsiConsole.WriteLine("Preset added succesfuly");
+            else
+            {
+                AnsiConsole.Clear();
+                var option = AnsiConsole.Prompt(new SelectionPrompt<string>().Title("Name is already taken. Do you want to overwrite existing preset?")
+                    .AddChoices("Yes", "No"));
+                if (option == "Yes") _controller.OverwritePreset(name);
+            }
         }
         public void OptionLoadPreset()
         {
-
+            string[] names = _controller.GetPresets().Select(p => p.name).Concat(new[] { "Return" }).ToArray();
+            while (true)
+            {
+                AnsiConsole.Clear();
+                string pre = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices(names));
+                if (pre != "Return") _controller.LoadPreset(pre);
+                return;
+            }
+        }
+        public void OptionDeletePreset()
+        {
+            string[] names = _controller.GetPresets().Select(p => p.name).Concat(new[] { "Return" }).ToArray();
+            while (true)
+            {
+                AnsiConsole.Clear();
+                string pre = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices(names.Skip(1)));
+                if (pre != "Return")
+                {
+                    AnsiConsole.Clear();
+                    var option = AnsiConsole.Prompt(new SelectionPrompt<string>().Title("Are you sure you want to delete this preset?").AddChoices("Yes", "No"));
+                    if (option == "Yes")
+                    {
+                        _controller.DeletePreset(pre);
+                        names = _controller.GetPresets().Select(p => p.name).Concat(new[] { "Return" }).ToArray();
+                    }
+                }
+                else if( pre == "Return") return;
+            }
         }
         public static void ShowClosePrompt()
         {

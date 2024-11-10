@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,23 +18,20 @@ namespace Metronome.Models
         public int beatCounter = 0;
         public int firstBeatSound;
         public int beatSound;
-        public MetronomeModel() {
-            BPM = 120;
-            timer.Elapsed += Timer_Elapsed;
-            timer.Interval = 60000 / BPM;
-            beats = 4;
-            firstBeatSound = 800;
-            beatSound = 400;
-        }
-        public MetronomeModel(int bpm, int b, int fbs, int bs)
+        public MetronomeModel(Preset _preset) 
         {
-            BPM = bpm;
             timer.Elapsed += Timer_Elapsed;
-            timer.Interval = 60000 / BPM;
-            beats = b;
-            firstBeatSound = fbs;
-            beatSound = bs;
+            SetPreset(_preset);
         }
+        public void SetPreset(Preset _preset)
+        {
+            BPM = _preset.bpm;
+            timer.Interval = 60000 / BPM;
+            beats = _preset.beats;
+            firstBeatSound = _preset.fbs;
+            beatSound = _preset.bs; 
+        }
+
         public void UpdateBPM(int bpm)
         {
             BPM = bpm;
