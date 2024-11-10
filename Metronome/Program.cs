@@ -12,7 +12,7 @@ namespace Metronome
     {
         public static void Main(string[] args)
         {
-            ModelMetronome model = new ModelMetronome();
+            IOModel model = new(new MetronomeModel());
             SCInterface view = new SCInterface();
             ViewController controller = new ViewController(model, view);
             view.SetController(controller);
