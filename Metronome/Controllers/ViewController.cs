@@ -7,7 +7,7 @@ namespace Metronome.Controllers
         private MetronomeModel _model;
         private SCInterface _view;
         private Presets _presets;
-        public GuitarTuner _tuner;
+        private GuitarTuner _tuner;
         public ViewController(MetronomeModel model, SCInterface view, Presets presets) {
             this._model = model;
             this._view = view;
@@ -42,6 +42,7 @@ namespace Metronome.Controllers
         public void StopTuner() => _tuner.Stop();
         public string GetClosestString() => _tuner.ClosestString;
         public float GetDetectedFrequency() => _tuner.DetectedFrequency;
+        public float GetClosestFrequency() => _tuner.ClosestFrequency;
         public static void Close() => SCInterface.ShowClosePrompt();
     }
 }

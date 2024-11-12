@@ -43,7 +43,7 @@ namespace Metronome.Views
             AnsiConsole.Clear();
             AnsiConsole.Write(new Panel(new FigletText($"Tuner").Centered()));
             _controller.StartTuner();
-            AnsiConsole.Live(new Panel($"[bold]Closest frequency:[/] {_controller._tuner.ClosestFrequency} \n[bold]Closest string:[/] {_controller._tuner.ClosestString}\n[bold]Detected frequency:[/] {_controller._tuner.DetectedFrequency}"))
+            AnsiConsole.Live(new Panel($"[bold]Closest frequency:[/] {_controller.GetClosestFrequency()} \n[bold]Closest string:[/] {_controller.GetClosestString()}\n[bold]Detected frequency:[/] {_controller.GetDetectedFrequency()}"))
             .Start(ctx =>
             {
                 while(true)
