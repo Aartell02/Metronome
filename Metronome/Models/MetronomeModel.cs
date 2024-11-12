@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.ExceptionServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
+﻿using System.Timers;
 
 namespace Metronome.Models
 {
@@ -20,42 +13,42 @@ namespace Metronome.Models
         public int beatSound;
         public MetronomeModel(Preset _preset) 
         {
-            timer.Elapsed += Timer_Elapsed;
+            this.timer.Elapsed += Timer_Elapsed;
             SetPreset(_preset);
         }
         public void SetPreset(Preset _preset)
         {
-            BPM = _preset.bpm;
-            timer.Interval = 60000 / BPM;
-            beats = _preset.beats;
-            firstBeatSound = _preset.fbs;
-            beatSound = _preset.bs; 
+            this.BPM = _preset.bpm;
+            this.timer.Interval = 60000 / this.BPM;
+            this.beats = _preset.beats;
+            this.firstBeatSound = _preset.fbs;
+            this.beatSound = _preset.bs; 
         }
 
         public void UpdateBPM(int bpm)
         {
-            BPM = bpm;
-            timer.Interval = 60000 / BPM;
+            this.BPM = bpm;
+            this.timer.Interval = 60000 / this.BPM;
         }
         public void UpdateSound((int FBS,int BS) _sound) 
-        { 
-            firstBeatSound = _sound.FBS;
-            beatSound = _sound.BS;
+        {
+            this.firstBeatSound = _sound.FBS;
+            this.beatSound = _sound.BS;
         }
-        public void UpdateBeats(int b) => beats = b;
+        public void UpdateBeats(int b) => this.beats = b;
         public void TimerStart()
         {
-            timer.Start();
+            this.timer.Start();
         }
         public void TimerStop() {
-            timer.Stop();
+            this.timer.Stop();
         }
         public void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (beatCounter == 0) System.Console.Beep(firstBeatSound, 300);
-            else System.Console.Beep(beatSound, 300);
-            beatCounter++;
-            beatCounter = beatCounter % beats;
+            if (this.beatCounter == 0) System.Console.Beep(this.firstBeatSound, 300);
+            else System.Console.Beep(this.beatSound, 300);
+            this.beatCounter++;
+            this.beatCounter = this.beatCounter % this.beats;
 
         }
     }

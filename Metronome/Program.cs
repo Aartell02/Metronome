@@ -1,11 +1,6 @@
 ﻿using Metronome.Controllers;
 using Metronome.Models;
 using Metronome.Views;
-using System.Reflection.Metadata;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace Metronome
 {
     public class Program

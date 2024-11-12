@@ -1,6 +1,4 @@
-﻿using System.Threading.Channels;
-using System.Timers;
-using Metronome.Models;
+﻿using Metronome.Models;
 using Metronome.Views;
 namespace Metronome.Controllers
 {
@@ -9,11 +7,12 @@ namespace Metronome.Controllers
         private MetronomeModel _model;
         private SCInterface _view;
         private Presets _presets;
-
+        public GuitarTuner _tuner;
         public ViewController(MetronomeModel model, SCInterface view, Presets presets) {
             this._model = model;
             this._view = view;
             this._presets = presets;
+            this._tuner = new GuitarTuner();
         }
         public void Run() => _view.Display();
         public void Timer_Start() => _model.TimerStart();
@@ -39,9 +38,10 @@ namespace Metronome.Controllers
             DeletePreset(name);
             AddPreset(name);
         }
-        public static void Close()
-        {
-            SCInterface.ShowClosePrompt();
-        }
+        public void StartTuner() => _tuner.Start();
+        public void StopTuner() => _tuner.Stop();
+        public string GetClosestString() => _tuner.ClosestString;
+        public float GetDetectedFrequency() => _tuner.DetectedFrequency;
+        public static void Close() => SCInterface.ShowClosePrompt();
     }
 }

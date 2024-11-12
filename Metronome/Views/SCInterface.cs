@@ -1,15 +1,8 @@
 ﻿using Spectre.Console;
 using Metronome.Controllers;
-using System;
-using System.Reflection.PortableExecutable;
-using System.Media;
-using System.Diagnostics;
-using System.Timers;
 using System.Data;
-using System.Threading.Channels;
-using static System.Net.Mime.MediaTypeNames;
-using Metronome.Models;
-using System.Reflection.Metadata.Ecma335;
+using System.Timers;
+
 
 namespace Metronome.Views
 {
@@ -26,9 +19,9 @@ namespace Metronome.Views
             while (true)
             {
                 AnsiConsole.Clear();
+                AnsiConsole.Write(new Panel(new FigletText($"BPM: {_controller.GetBPM()}    Beats: {_controller.GetBeats()}").LeftJustified()));
                 var menu = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                    .Title($"BPM: {_controller.GetBPM()}\nBeats: {_controller.GetBeats()}\nChoose option:")
-                    .AddChoices($"{startstop}", "BPM", "Settings", "Close"));
+                    .AddChoices($"{startstop}", "BPM", "Tuner", "Settings", "Close"));
                 if (menu == "BPM")_controller.SetBBPM(OptionBPM((_controller.GetBPM(), _controller.GetBeats())).Result);
                 else if (menu == "Start")
                 {
@@ -40,15 +33,38 @@ namespace Metronome.Views
                     _controller.Timer_Stop();
                     startstop = "Start";
                 }
+                else if (menu == "Tuner") OptionTunerAsync();
                 else if (menu == "Settings") OptionSettings();
                 else if (menu == "Close") return;
             }
         }
+        public void OptionTunerAsync()
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.Write(new Panel(new FigletText($"Tuner").Centered()));
+            _controller.StartTuner();
+            AnsiConsole.Live(new Panel($"[bold]Closest frequency:[/] {_controller._tuner.ClosestFrequency} \n[bold]Closest string:[/] {_controller._tuner.ClosestString}\n[bold]Detected frequency:[/] {_controller._tuner.DetectedFrequency}"))
+            .Start(ctx =>
+            {
+                while(true)
+                {
+                    if (Console.KeyAvailable)
+                    {
+                        var key = Console.ReadKey(intercept: true);
+                        if (key.Key == ConsoleKey.Escape)
+                            break;
+                    }
+                        ctx.UpdateTarget(new Panel($"[bold]Closest frequency:[/] {_controller._tuner.ClosestFrequency} \n[bold]Closest string:[/] {_controller._tuner.ClosestString}\n[bold]Detected frequency:[/] {_controller._tuner.DetectedFrequency}"));
+                }
+            });
+            _controller.StopTuner();
+        }
+
         public static async Task<(int,int)> OptionBPM((int,int) bbpm )
         {
             (int _bpm, int _beats) _t = bbpm;
             AnsiConsole.Write("| Press Enter to save | Press Escape to leave |\n| Press Up/Down Arrow to increase/decrease | Press Right/Left Arrow to increase/decrease |\n");
-            var panel = new Panel($"[bold]Current BPM:[/] {_t._bpm}\n[bold]Current Beats:[/] {_t._beats}");
+            var panel = new Panel($"[bold]Current BPM:[/] {_t._bpm}    Right/Left \n[bold]Current Beats:[/] {_t._beats}    Up/Down ");
             panel.Expand();
 
             (int,int) finalBpm = await AnsiConsole.Live(panel).StartAsync(async ctx =>
@@ -60,7 +76,7 @@ namespace Metronome.Views
                     switch (keyInfo.Key)
                     {
                         case ConsoleKey.RightArrow:
-                            if (_t._bpm < 240) _t._bpm++;
+                            if (_t._bpm < 190) _t._bpm++;
                             break;
 
                         case ConsoleKey.LeftArrow:
@@ -87,6 +103,7 @@ namespace Metronome.Views
             });
             return finalBpm;
         }
+
         public void OptionSettings()
         {
             while (true)
@@ -105,7 +122,7 @@ namespace Metronome.Views
         {
             (int _FB, int _B) _t = sound;
             AnsiConsole.Write("| Press Enter to save | Press Escape to leave |\n| Press Up/Down Arrow to increase/decrease | Press Right/Left Arrow to increase/decrease |\n");
-            var panel = new Panel($"[bold]Current First Beat Hz:[/] {_t._FB}\n[bold]Current Beat Hz:[/] {_t._B}");
+            var panel = new Panel($"[bold]Current First Beat Hz:[/] {_t._FB}    Right/Left\n[bold]Current Beat Hz:[/] {_t._B}    Up/Down");
             panel.Expand();
             (int _FB, int _B) tf = await AnsiConsole.Live(panel).StartAsync(async ctx =>
             {
@@ -189,7 +206,7 @@ namespace Metronome.Views
         public static void ShowClosePrompt()
         {
             AnsiConsole.Clear();
-            AnsiConsole.MarkupLine("[red]Bye! [/] :waving_hand:");
+            AnsiConsole.MarkupLine("\n[red]Bye! [/]");
         }
     }
 }
