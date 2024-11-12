@@ -54,7 +54,7 @@ namespace Metronome.Views
                         if (key.Key == ConsoleKey.Escape)
                             break;
                     }
-                        ctx.UpdateTarget(new Panel($"[bold]Closest frequency:[/] {_controller._tuner.ClosestFrequency} \n[bold]Closest string:[/] {_controller._tuner.ClosestString}\n[bold]Detected frequency:[/] {_controller._tuner.DetectedFrequency}"));
+                        ctx.UpdateTarget(new Panel($"[bold]Closest frequency:[/] {_controller.GetClosestFrequency()} \n[bold]Closest string:[/] {_controller.GetClosestString()}\n[bold]Detected frequency:[/] {_controller.GetDetectedFrequency()}"));
                 }
             });
             _controller.StopTuner();
