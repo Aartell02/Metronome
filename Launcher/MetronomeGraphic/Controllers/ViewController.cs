@@ -1,71 +1,69 @@
 ﻿using MetronomeGraphic.Models;
 using MetronomeGraphic.Views;
-using NAudio.Wave;
-using System.Threading;
-using System;
+using MetronomeGraphic.Services;
 using System.Timers;
 using System.Windows.Forms;
 namespace MetronomeGraphic.Controllers
 {
     public class ViewController
     {
-        private MetronomeModel _model;
-        private ActivityView _view; //zmiana zmiennej
-        private Presets _presets;
-        private GuitarTuner _tuner;
-        public ViewController(MetronomeModel model, Presets presets) {
-            this._model = model;
-            this._presets = presets;
-            this._tuner = new GuitarTuner();
-            _model.timer.Elapsed += Timer_Elapsed;
+        private MetronomeModel model;
+        private ActivityView view; 
+        private PresetRepositoryModel presets;
+        private TunerModel tuner;
+        private AudioInputService audioService;
+        public ViewController(MetronomeModel model, PresetRepositoryModel presets) {
+            this.model = model;
+            this.presets = presets;
+            this.tuner = new TunerModel();
+            this.audioService = new AudioInputService(tuner);
+            model.BeatOccurred += isFirst => MetronomBeep(isFirst);
         }
         public void Run()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(this._view = new ActivityView(this));
+            Application.Run(this.view = new ActivityView(this));
         }
-        public void Timer_Start() {
-            _model.TimerStart();
-         }
-        public void Timer_Stop() => _model.TimerStop();
+        //METRONOME
+        public void Timer_Start() => model.TimerStart();
+        public void Timer_Stop() => model.TimerStop();
         public void SetBBPM((int bpm, int beats) t)
         {
             SetBPM(t.bpm);
             SetBeats(t.beats);
         }
-        public int GetBPM() => _model.BPM;
-        public void SetBPM(int BPM) => _model.UpdateBPM(BPM);
-        public int GetBeats() => _model.beats;
-        public void SetBeats(int beats) => _model.UpdateBeats(beats);
-        public (int, int) GetSound() => (_model.firstBeatSound, _model.beatSound);
-        public void SetSound((int, int) sound) => _model.UpdateSound(sound);
-        public bool AddPreset(string name) => _presets.AddPreset(new Preset(name, _model.BPM, _model.beats, _model.firstBeatSound, _model.beatSound));
-        public Presets GetPresets() => _presets;
-        public Preset GetPresetByName(string name) => _presets.GetByName(name);
-        public void LoadPreset(string name) => _model.SetPreset(_presets.GetByName(name));
-        public void DeletePreset(string name) => _presets.Remove(_presets.GetByName(name));
+        public int GetBPM() => model.BPM;
+        public void SetBPM(int BPM) => model.UpdateBPM(BPM);
+        public int GetBeats() => model.Beats;
+        public void SetBeats(int beats) => model.UpdateBeats(beats);
+        public (int, int) GetSound() => (model.FirstBeatSound, model.BeatSound);
+        public void SetSound((int, int) sound) => model.UpdateSound(sound);
+        private void MetronomBeep(bool isFirst)
+        {
+            view.UpdateBeatDots(); 
+            if (model.BeatCounter == 0) System.Console.Beep(model.FirstBeatSound, 300);
+            else System.Console.Beep(model.BeatSound, 300);
+
+        }
+        //PRESETS
+        public bool AddPreset(string name) => presets.AddPreset(new Preset(name, model.BPM, model.Beats, model.FirstBeatSound, model.BeatSound));
+        public PresetRepositoryModel GetPresets() => presets;
+        public Preset GetPresetByName(string name) => presets.GetByName(name);
+        public void LoadPreset(string name) => model.SetPreset(presets.GetByName(name));
+        public void DeletePreset(string name) => presets.Remove(presets.GetByName(name));
         public void OverwritePreset(string name)
         {
             DeletePreset(name);
             AddPreset(name);
         }
-        public void StartTuner() => _tuner.Start();
-        public void StopTuner() => _tuner.Stop();
-        public string GetClosestString() => _tuner.ClosestString;
-        public float GetDetectedFrequency() => _tuner.DetectedFrequency;
-        public float GetClosestFrequency() => _tuner.ClosestFrequency;
-        //public static void Close() => _view.ShowClosePrompt(); // niepotrzebne
-        ////
-        public int GetCurrentBeat() => _model.beatCounter;
-        public void Timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            _view.UpdateBeatDots(); // Animacja
-            if (_model.beatCounter == 0) System.Console.Beep(_model.firstBeatSound, 300);
-            else System.Console.Beep(_model.beatSound, 300);
-            _model.beatCounter++;
-            _model.beatCounter = _model.beatCounter % _model.beats;
-
-        }
+        //TUNER
+        public void StartTuner() => audioService.Start();
+        public void StopTuner() => audioService.Stop();
+        public string GetClosestString() => tuner.ClosestString;
+        public float GetDetectedFrequency() => tuner.DetectedFrequency;
+        public float GetClosestFrequency() => tuner.ClosestFrequency;
+        public int GetCurrentBeat() => model.BeatCounter;
+        
     }
 }

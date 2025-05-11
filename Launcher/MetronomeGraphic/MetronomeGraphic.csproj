@@ -78,11 +78,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ViewController.cs" />
-    <Compile Include="Models\GuitarTuner.cs" />
+    <Compile Include="Models\TunerModel.cs" />
     <Compile Include="Models\MetronomeModel.cs" />
-    <Compile Include="Models\Presets.cs" />
+    <Compile Include="Models\PresetsRepositoryModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AudioInputService.cs" />
+    <Compile Include="Services\SignalProcessor.cs" />
     <Compile Include="Views\ActivityView.cs">
       <SubType>Form</SubType>
     </Compile>

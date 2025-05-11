@@ -22,9 +22,9 @@ namespace Metronome.Models
             return $"{Name}|{Bpm}|{Beats}|{Fbs}|{Bs}";
         }
     }
-    public class PresetRepository : List<Preset> 
+    public class PresetRepositoryModel : List<Preset> 
     {
-        public PresetRepository()
+        public PresetRepositoryModel()
         {
             LoadPresets();
         }

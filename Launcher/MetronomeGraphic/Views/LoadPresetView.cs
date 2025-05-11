@@ -16,15 +16,13 @@ namespace MetronomeGraphic.Views
     {
         private ViewController _controller;
         private ActivityView _mainView;
-        private Presets _presets;
-        private string[] names;
+        private string[] Names;
 
         public LoadPresetView(ViewController controller, ActivityView mainView)
         {
             this._controller = controller;
             this._mainView = mainView;
-            this._presets = _controller.GetPresets();
-            names = _presets.Select(p => p.name).ToArray();
+            Names = _controller.GetPresets().Select(p => p.Name).ToArray();
 
             InitializeComponent();
         }

@@ -46,7 +46,7 @@ namespace MetronomeGraphic.Views
             string nazwa = textBoxName.Text;
             if (!string.IsNullOrWhiteSpace(nazwa))
             {
-                if (!_controller.AddPreset(nazwa)) MessageBox.Show($"Zapisano: {nazwa}", "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (_controller.AddPreset(nazwa)) MessageBox.Show($"Zapisano: {nazwa}", "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 else MessageBox.Show($"Istnieje już zapis o nazwie: {nazwa}", "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 this.Close();

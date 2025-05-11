@@ -2,9 +2,8 @@
 using System.Linq;
 using System.Numerics;
 using NAudio.Wave;
-using Spectre.Console;
 
-namespace Metronome.Models
+namespace MetronomeGraphic.Models
 {
     public class TunerModel
     {

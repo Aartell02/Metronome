@@ -11,13 +11,10 @@ namespace MetronomeGraphic
 {
     internal static class Program
     {
-        /// <summary>
-        /// Główny punkt wejścia dla aplikacji.
-        /// </summary>
         [STAThread]
         static void Main()
         {
-            Presets presets = new Presets();
+            PresetRepositoryModel presets = new PresetRepositoryModel();
             MetronomeModel model = new MetronomeModel(presets.GetByName("Default"));
             ViewController controller = new ViewController(model, presets);
             controller.Run();

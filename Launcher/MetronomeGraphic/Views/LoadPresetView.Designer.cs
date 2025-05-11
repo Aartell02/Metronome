@@ -8,7 +8,6 @@ namespace MetronomeGraphic.Views
     public partial class LoadPresetView
     {
         private System.ComponentModel.IContainer components = null;
-        private Presets presets;
 
         protected override void Dispose(bool disposing)
         {
@@ -87,7 +86,7 @@ namespace MetronomeGraphic.Views
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             string searchText = txtSearch.Text.ToLower();
-            var filteredNames = names
+            var filteredNames = Names
                 .Where(name => name.ToLower().Contains(searchText))
                 .ToList();
 
@@ -102,9 +101,9 @@ namespace MetronomeGraphic.Views
 
         private void UpdateNameList()
         {
-            names = _presets.Select(p => p.name).ToArray();
+            Names = _controller.GetPresets().Select(p => p.Name).ToArray();
             lstNames.DataSource = null;
-            lstNames.DataSource = names;
+            lstNames.DataSource = Names;
         }
 
         private void btnLoad_Click(object sender, EventArgs e)

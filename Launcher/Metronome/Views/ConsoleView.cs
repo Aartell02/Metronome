@@ -33,12 +33,12 @@ namespace Metronome.Views
                     _controller.Timer_Stop();
                     startstop = "Start";
                 }
-                else if (menu == "Tuner") OptionTunerAsync();
+                else if (menu == "Tuner") OptionTuner();
                 else if (menu == "Settings") OptionSettings();
                 else if (menu == "Close") return;
             }
         }
-        public void OptionTunerAsync()
+        public void OptionTuner()
         {
             AnsiConsole.Clear();
             AnsiConsole.Write(new Panel(new FigletText($"Tuner").Centered()));
@@ -60,7 +60,7 @@ namespace Metronome.Views
             _controller.StopTuner();
         }
 
-        public static async Task<(int,int)> OptionBPM((int,int) bbpm )
+        public async Task<(int,int)> OptionBPM((int,int) bbpm )
         {
             (int _bpm, int _beats) _t = bbpm;
             AnsiConsole.Write("| Press Enter to save | Press Escape to leave |\n| Press Up/Down Arrow to increase/decrease | Press Right/Left Arrow to increase/decrease |\n");
@@ -118,7 +118,7 @@ namespace Metronome.Views
                 else if (menu == "Return") return;
             }
         }
-        public static async Task<(int, int)> Sound((int,int) sound)
+        public async Task<(int, int)> Sound((int,int) sound)
         {
             (int _FB, int _B) _t = sound;
             AnsiConsole.Write("| Press Enter to save | Press Escape to leave |\n| Press Up/Down Arrow to increase/decrease | Press Right/Left Arrow to increase/decrease |\n");

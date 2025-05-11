@@ -19,6 +19,7 @@ namespace MetronomeGraphic.Views
         {
             this._controller = controller;
             this._mainView = mainView;
+            _controller.StartTuner();
             CustomInitializeComponent();
         }
 

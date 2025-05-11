@@ -7,7 +7,7 @@ namespace Metronome
     {
         public static void Main(string[] args)
         {
-            PresetRepository presets = new();
+            PresetRepositoryModel presets = new();
             MetronomeModel model = new(presets.GetByName("Default"));
             ConsoleView view = new();
             ConsoleViewController controller = new(model,view, presets);
