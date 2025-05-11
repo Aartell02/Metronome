@@ -6,10 +6,10 @@ using System.Timers;
 
 namespace Metronome.Views
 {
-    public class SCInterface
+    public class ConsoleView
     {
-        private ViewController _controller;
-        public void SetController(ViewController controller)
+        private ConsoleViewController _controller;
+        public void SetController(ConsoleViewController controller)
         {
             _controller = controller;
         }
@@ -163,7 +163,7 @@ namespace Metronome.Views
         public void OptionSavePreset()
         {
             var name = AnsiConsole.Prompt(new TextPrompt<string>("Please enter preset [green]name[/] to save:").PromptStyle("cyan"));
-            if (!_controller.AddPreset(name)) AnsiConsole.WriteLine("Preset added succesfuly");
+            if (_controller.AddPreset(name)) AnsiConsole.WriteLine("Preset added succesfuly");
             else
             {
                 AnsiConsole.Clear();
@@ -174,7 +174,7 @@ namespace Metronome.Views
         }
         public void OptionLoadPreset()
         {
-            string[] names = _controller.GetPresets().Select(p => p.name).Concat(new[] { "Return" }).ToArray();
+            string[] names = _controller.GetPresets().Select(p => p.Name).Concat(new[] { "Return" }).ToArray();
             while (true)
             {
                 AnsiConsole.Clear();
@@ -185,7 +185,7 @@ namespace Metronome.Views
         }
         public void OptionDeletePreset()
         {
-            string[] names = _controller.GetPresets().Select(p => p.name).Concat(new[] { "Return" }).ToArray();
+            string[] names = _controller.GetPresets().Select(p => p.Name).Concat(new[] { "Return" }).ToArray();
             while (true)
             {
                 AnsiConsole.Clear();
@@ -197,7 +197,7 @@ namespace Metronome.Views
                     if (option == "Yes")
                     {
                         _controller.DeletePreset(pre);
-                        names = _controller.GetPresets().Select(p => p.name).Concat(new[] { "Return" }).ToArray();
+                        names = _controller.GetPresets().Select(p => p.Name).Concat(new[] { "Return" }).ToArray();
                     }
                 }
                 else if( pre == "Return") return;

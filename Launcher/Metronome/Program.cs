@@ -7,14 +7,14 @@ namespace Metronome
     {
         public static void Main(string[] args)
         {
-            Presets presets = new();
+            PresetRepository presets = new();
             MetronomeModel model = new(presets.GetByName("Default"));
-            SCInterface view = new();
-            ViewController controller = new(model,view, presets);
+            ConsoleView view = new();
+            ConsoleViewController controller = new(model,view, presets);
             view.SetController(controller);
             Console.CancelKeyPress += (sender, e) =>
             {
-                ViewController.Close();
+                ConsoleViewController.Close();
                 Environment.Exit(0);
             };
             controller.Run();

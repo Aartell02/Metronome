@@ -1,4 +1,9 @@
-﻿namespace Metronome.Models
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace MetronomeGraphic.Models
 {
     public class Preset
     {
@@ -45,7 +50,7 @@
             string[] presets = this.Select(p => p.ToString()).ToArray();
             File.WriteAllLines("./Presets.txt", presets);
         }
-        public Preset? GetByName(string name) => this.FirstOrDefault(preset => preset.name == name);
+        public Preset GetByName(string name) => this.FirstOrDefault(preset => preset.name == name);
         public bool AddPreset(Preset preset) {
             bool exist = false;
             foreach (string line in this.Select(p => p.name))

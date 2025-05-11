@@ -6,10 +6,10 @@ using Spectre.Console;
 
 namespace Metronome.Models
 {
-    public class GuitarTuner
+    public class TunerModel
     {
-    public float[] GuitarFrequencies = { 82.41f, 110.00f, 146.83f, 196.00f, 246.94f, 329.63f };
-    public string[] GuitarStrings = { "E2", "A2", "D3", "G3", "B3", "E4" };
+        public float[] GuitarFrequencies = { 82.41f, 110.00f, 146.83f, 196.00f, 246.94f, 329.63f };
+        public string[] GuitarStrings = { "E2", "A2", "D3", "G3", "B3", "E4" };
 
         public float DetectedFrequency { get; private set; }
         public string ClosestString { get; private set; }
@@ -18,7 +18,7 @@ namespace Metronome.Models
 
         public event Action FrequencyDetected;
 
-        public GuitarTuner()
+        public TunerModel()
         {
             waveIn = new WaveInEvent
             {
